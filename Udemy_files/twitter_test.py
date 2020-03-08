@@ -3,7 +3,7 @@ from unittest.mock import patch, Mock, MagicMock
 import pytest
 import requests
 
-from twitter import Twitter
+from Udemy_files.twitter import Twitter
 
 
 class ResponseGetMock(object):
