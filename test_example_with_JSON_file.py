@@ -3,19 +3,30 @@ import pytest
 from twitter_example_with_JSON_file import Twitter
 
 
+class ResponseGetMock(object):
+    def json(self):
+        return {'avatar_url': 'test'}
+
+
 # @pytest.fixture(autouse=True)  # bedzie wykonana przed każym testem nie zaleznie czy go potrzebuje czy nie
 # - uwazana za niezpieczna
 
-# @pytest.fixture()
-# def backend(tmpdir):  # tmpdir to funkcja ktora zapisuje do tymczasowego pliku gdzies na dysku
-#     temp_file = tmpdir.join('test.txt')
-#     temp_file.write('')
-#     return temp_file
+@pytest.fixture(autouse=True)
+def no_requests(monkeypatch):  # monkeypatch to argument do napisywyania, wyłącznia danycch funkcjonalności
+    monkeypatch.delattr('requests.sessions.Session.request')  # tu wskazujey atrybut ktory chcemy wylaczyc z dzialania
+
+
+@pytest.fixture()
+def backend(tmpdir):  # tmpdir to funkcja ktora zapisuje do tymczasowego pliku gdzies na dysku
+    temp_file = tmpdir.join('test.txt')
+    temp_file.write('')
+    return temp_file
 
 
 @pytest.fixture(params=[None, 'python'])
 def username(request):
     return request.param
+
 
 @pytest.fixture(params=['list', 'backend'], name='twitter')
 def fixture_twitter(backend, username, request, monkeypatch):
@@ -24,7 +35,16 @@ def fixture_twitter(backend, username, request, monkeypatch):
     elif request.param == 'backend':
         twitter = Twitter(backend=backend, username=username)
 
+    def monkey_return(url):
+        return ResponseGetMock()
+
+    monkeypatch.setattr(requests, 'get', monkey_return)
+
+    #monkeypatch.setattr(twitter, 'get_user_avatar', monkey_return)
+    # funkcja monkey_return zostanie wywolana zamiast metody get_user... w obiekcie twitter
+
     return twitter
+
 
 def test_twitter_init(twitter):
     assert twitter
@@ -43,9 +63,8 @@ def test_tweet_message(twitter):
 # oraz z text.txt
 
 
-
-    # twitter.delete()  <- tmpdir dba o usuwanie po tescie pliku wiec metoda del nie jest potrzebna
-    # print("\n", request.function, request.module)
+# twitter.delete()  <- tmpdir dba o usuwanie po tescie pliku wiec metoda del nie jest potrzebna
+# print("\n", request.function, request.module)
 
 
 def test_long_tweet(twitter):
@@ -79,6 +98,13 @@ def test_tweet_hashtag(message, expected, twitter):
     # dekorator 3 razy wywoluje def z innymi parametrami
 
 
+def test_tweet_with_username(twitter):
+    if not twitter.username:
+        pytest.skip()  # pomija w testach jezeli nie ma username
+
+    twitter.tweet('Test message')
+    assert twitter.tweets == [{'message': 'Test message', 'avatar': 'test'}]
+
 # def test_tweer_with_hashtag():
 #     tweeter = Twitter()
 #     message = "Test #first message"
@@ -99,7 +125,3 @@ def test_tweet_hashtag(message, expected, twitter):
 #     message = "#FIRST Test message"
 #     # tweeter.tweet(message)  < to jest zbedene
 #     assert 'FIRST' in tweeter.find_hashtags(message)
-
-if __name__ == '__main__':
-    x = test_tweet_message()
-    print(x)
