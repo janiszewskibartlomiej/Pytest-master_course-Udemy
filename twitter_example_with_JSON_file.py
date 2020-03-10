@@ -45,6 +45,7 @@ class Twitter(object):
         # urljoin to metoda biblioteki urllib parse
         # print(url)
         response = requests.get(url)
+        print(response.json()['avatar_url'])
         return response.json()['avatar_url']
 
     def tweet(self, message):

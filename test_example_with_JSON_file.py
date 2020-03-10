@@ -1,4 +1,5 @@
 import pytest
+import requests
 
 from twitter_example_with_JSON_file import Twitter
 
@@ -100,7 +101,8 @@ def test_tweet_hashtag(message, expected, twitter):
 
 def test_tweet_with_username(twitter):
     if not twitter.username:
-        pytest.skip()  # pomija w testach jezeli nie ma username
+        pytest.skip()
+        # pomija w testach jezeli nie ma username
 
     twitter.tweet('Test message')
     assert twitter.tweets == [{'message': 'Test message', 'avatar': 'test'}]
