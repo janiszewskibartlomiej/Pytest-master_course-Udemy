@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 import pytest
 import requests
 
@@ -36,10 +38,11 @@ def fixture_twitter(backend, username, request, monkeypatch):
     elif request.param == 'backend':
         twitter = Twitter(backend=backend, username=username)
 
-    def monkey_return(url):
-        return ResponseGetMock()
-
-    monkeypatch.setattr(requests, 'get', monkey_return)
+    """ def monkey_return(url):
+         return ResponseGetMock()
+     
+     monkeypatch.setattr(requests, 'get', monkey_return)"""
+    # to zamienimy na mocowanie ponieważ daje nam to więcej możliwości niż monke
 
     #monkeypatch.setattr(twitter, 'get_user_avatar', monkey_return)
     # funkcja monkey_return zostanie wywolana zamiast metody get_user... w obiekcie twitter
@@ -50,8 +53,19 @@ def fixture_twitter(backend, username, request, monkeypatch):
 def test_twitter_init(twitter):
     assert twitter
 
+"""@patch.object(Twitter, 'get_user_avatar', return_value='test') """
+#ta metoda pachowania nei sprawdza wszytskiego - nie sprawdzamy dzialania request dlatego zmienimy moca na nastepujacy:
+@patch.object(requests, 'get', return_value=ResponseGetMock())
+def test_tweet_single_message(avatar_mock, twitter): # avatar_mock - pod tą zmienną bedzie przekazany wynik dekoratora
+    # i musi być wrzucony w tym miejscu poniewaz inaczej nie bedzie do niegfo dostepu
 
-def test_tweet_message(twitter):
+    #pocztkowo kozystamy z funkcji path ktora jest czescioa unittest.mock, natomiast może to być kłopotliwe
+    # poniewaz trzeba dodać pełna ścieżkę do metody; dlatego druga wersja kozysta z patch.object
+    """with patch('twitter.Twitter.get_user_avatar', return_value='test'):"""
+    #druga wersja kożysta z obiektu:
+    """with patch.object(Twitter, 'get_user_avatar', return_value='test'):"""
+
+    #jezeli ni echcemy kozystac z blocku with mozna przekazac moka dekoratoerm @path.object
     twitter.tweet('Test message')
     assert twitter.tweet_messages == ['Test message']
 
@@ -98,14 +112,20 @@ def test_tweet_hashtag(message, expected, twitter):
     assert twitter.find_hashtags(message) == expected  # ta odekorowana definicja robi to samo co 3 def na dole,
     # dekorator 3 razy wywoluje def z innymi parametrami
 
-
-def test_tweet_with_username(twitter):
+"""@patch.object(Twitter, 'get_user_avatar', return_value='test') """
+#ta metoda pachowania nei sprawdza wszytskiego - nie sprawdzamy dzialania request dlatego zmienimy moca na nastepujacy:
+@patch.object(requests, 'get', return_value=ResponseGetMock())
+def test_tweet_with_username(avatar_mock, twitter):
     if not twitter.username:
         pytest.skip()
         # pomija w testach jezeli nie ma username
 
     twitter.tweet('Test message')
     assert twitter.tweets == [{'message': 'Test message', 'avatar': 'test'}]
+    avatar_mock.assert_called()  #to jest metoda dostepna w mock.unittest i dzieki niej mamy mozliwosc sprawdzenia
+    # czy ta funkcja zostala wywowalan to jest mozyc z zastosowania mock unittest
+
+
 
 # def test_tweer_with_hashtag():
 #     tweeter = Twitter()
