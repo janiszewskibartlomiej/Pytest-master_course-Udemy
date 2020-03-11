@@ -52,7 +52,8 @@ class Twitter(object):
         if len(message) > 160:
             raise Exception("Message too long")
         self.tweets.append({'message': message,
-                            'avatar': self.get_user_avatar()
+                            'avatar': self.get_user_avatar(),
+                            'hashtags': self.find_hashtags(message)
                             })
         if self.backend:
             # with open(self.backend, mode='w') as twitter_file:
