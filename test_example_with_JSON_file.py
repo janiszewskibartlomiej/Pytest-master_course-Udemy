@@ -5,6 +5,14 @@ import requests
 
 from twitter_example_with_JSON_file import Twitter
 
+"""pip install pytest-cov  <-- dodatek  do pytest - sprawdza pokrycia kodu testami, jezlei dany modol nie jest przetestowany to nam to pokaze po wywolaniu
+'pytest --cov nazwa_modłu np test_example_with_JSON_file' 
+
+możemy uzyc funkcji raportu przy testach z coverege --> generuje plik z pokryciem kodu '!' nie sa pokryte:
+
+pytest --cov nazwa_modłu np test_example_with_JSON_file --cov-report annotate
+
+"""
 
 class ResponseGetMock(object):
     def json(self):
@@ -92,6 +100,22 @@ def test_long_tweet(twitter):
     assert twitter.tweet_messages == []
 
 
+@pytest.mark.parametrize("message, expected", [
+    ("Test #first message", ["first"]),
+    ("#first Test message", ["first"]),
+    ("#FIRST Test message", ["first"]),
+    ("Test message #first", ["first"]),
+    ("Test message #first #second", ["first", "second"])
+])
+def test_tweet_hashtag(message, expected, twitter):
+    assert twitter.find_hashtags(message) == expected
+# ważne aby dodadwac parametry w postaci listy dziekii temu
+# dane w wydruku sa indexowane i widoczne w print testach
+
+ # ta odekorowana definicja robi to samo co 3 def na dole,
+    # dekorator 3 razy wywoluje def z innymi parametrami
+
+
 def test_init_twitt_class(backend):
     twitter1 = Twitter(backend=backend)
     twitter2 = Twitter(backend=backend)
@@ -100,20 +124,6 @@ def test_init_twitt_class(backend):
     twitter2.tweet('Test 2')
 
     assert twitter2.tweet_messages == ['Test 1', 'Test 2']
-
-
-@pytest.mark.parametrize("message, expected", [
-    ("Test #first message", ["first"]),
-    ("#first Test message", ["first"]),
-    ("#FIRST Test message", ["first"]),
-    ("Test message #first", ["first"]),
-    ("Test message #first #second", ["first", "second"])
-])  # ważne aby dodadwac parametry w postaci listy dziekii temu
-# dane w wydruku sa indexowane i widoczne w print testach
-
-def test_tweet_hashtag(message, expected, twitter):
-    assert twitter.find_hashtags(message) == expected  # ta odekorowana definicja robi to samo co 3 def na dole,
-    # dekorator 3 razy wywoluje def z innymi parametrami
 
 
 """@patch.object(Twitter, 'get_user_avatar', return_value='test') """
@@ -146,7 +156,17 @@ def test_twitter_version(twitter):
     twitter.version.__eq__.return_value = '2.0'
     assert twitter.version == '2.0'
 
+@patch.object(requests, 'get', return_value=ResponseGetMock())
+def test_twitter_get_all_hashtags(avatar_mock, twitter):
+    twitter.tweet('Test #first')
+    twitter.tweet('Test #first #second')
+    twitter.tweet('Test #third')
+    assert twitter.get_all_hashtags() == {'first', 'second', 'third'}
 
+@patch.object(requests, 'get', return_value=ResponseGetMock())
+def test_twitter_get_all_ashtags_not_found(avatar_mock, twitter):
+    twitter.tweet('Test first')
+    assert twitter.get_all_hashtags() == "No hashtags found"
 
 # def test_tweer_with_hashtag():
 #     tweeter = Twitter()
