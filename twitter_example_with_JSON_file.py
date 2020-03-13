@@ -44,6 +44,17 @@ class Twitter(object):
         url = urljoin(USERS_API, self.username)
         # urljoin to metoda biblioteki urllib parse
         # print(url)
+        """zamiast printować możemy użyć biblioteki pdb kora np poprzez 
+        komende pdb.set_trace() zatrzymuje działem  i mamy dostep do wszytskich wynikow i zmiennych. 
+        Żeby przejsc dalej do nastepenje metody ktora wywoluje get_user_avatar wpisujemy 'c'
+        mozemy spardzic co jest np pod requests.get(url) 
+        mozemy rowniez przypisac rozne wartosci do zmiennych. pdp jest malo czytelne dlatego 
+        lepiej kozystac w web debug import wdb.set_trace
+        musimy zainstalować poprzez pip install wdb   oraz pip install wdb.server
+        odpalenie po aktywacji servera wdb.server.py + run pytest zostanie wyolany kod w przegladarce
+        przejscie do nastepnego wywoalnia naszego wdb.set... komenda '.c'"""
+        import pdb
+        pdb.set_trace()
         response = requests.get(url)
         print(response.json()['avatar_url'])
         return response.json()['avatar_url']
