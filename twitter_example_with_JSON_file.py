@@ -3,12 +3,15 @@ import re
 from urllib.parse import urljoin
 
 import requests
+import wdb
 
 USERS_API = "https://api.github.com/users/"
 
 
 class Twitter(object):
     version = '1.0'
+
+    wdb.set_trace()
 
     def __init__(self, backend=None, username=None):
         self.backend = backend
@@ -51,10 +54,8 @@ class Twitter(object):
         mozemy rowniez przypisac rozne wartosci do zmiennych. pdp jest malo czytelne dlatego 
         lepiej kozystac w web debug import wdb.set_trace
         musimy zainstalować poprzez pip install wdb   oraz pip install wdb.server
-        odpalenie po aktywacji servera wdb.server.py + run pytest zostanie wyolany kod w przegladarce
+        odpalenie  servera wdb.server.py + run pytest zostanie wywolany kod w przegladarce
         przejscie do nastepnego wywoalnia naszego wdb.set... komenda '.c'"""
-        import pdb
-        pdb.set_trace()
         response = requests.get(url)
         print(response.json()['avatar_url'])
         return response.json()['avatar_url']

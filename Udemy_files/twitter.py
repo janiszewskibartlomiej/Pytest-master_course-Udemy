@@ -3,6 +3,7 @@ import re
 from urllib.parse import urljoin
 
 import requests
+import wdb
 
 USERS_API = "https://api.github.com/users/"
 
@@ -30,7 +31,7 @@ class Twitter(object):
     def get_user_avatar(self):
         if not self.username:
             return None
-
+        wdb.set_trace()
         url = urljoin(USERS_API, self.username)
         resp = requests.get(url)
         return resp.json()['avatar_url']
