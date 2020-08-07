@@ -80,7 +80,32 @@ def twitter(request):
     
 Pytest rekomenduje uzywanie generatorów !!!
 
+@property
+def tweets(self):
+    return self._tweets  _tweets - to atrybut prywatny
+    
+ten dekorator powoduje ze mozmey sie odwoalc do tej metody podobnie jak poprzednio czyli twitter.tweets
 
+Fixture umożliwia uruchomienie funkcji z roznymi parametrami zadeklarowanymi np:
+@pytest.fixture(params=["chrome", "firefox", "ie"]) spowoduje uruchomienie 3 roznych przegladarek.
 
+zadeklarowanie w definicji request powoduje ze mamy dostep do np danych z jakiego miejsca został wywowalny test.
 
+w takiej sytuacji:
+
+@pytest.fixture(params=[None, 'python'], name ="twitter")
+def username(request):
+    return request.param
+
+mamy dostep do wartosci zadeklarowanych poprzez .param
+fixture przyjmuje rónież atrybut name aby zmieni nazwę pod którą beziemy przekazywac nasza fixue
+
+@pytest.fixture(autouse=True)  > użycie autouse powoduje że ta fixtura jest wykonanan przed każdym testem i nie trzeba jej przekazywac. 
+ta funkcjonalnosc uwazana jest za niebezpieczna praktyke
+
+@pytest.fixture()
+def backend(tmpdir):  # tmpdir to funkcja ktora zapisuje do tymczasowego pliku gdzies na dysku
+    temp_file = tmpdir.join('test.txt')
+    temp_file.write('')
+    return temp_file  # to zostaje wydzielone do conftest ponieważ nie jest uzywany tyko do testow twitter
 ```
