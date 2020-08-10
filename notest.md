@@ -134,10 +134,53 @@ def fixture_twitter(backend, username, request, monkeypatch):
     
     pytest.skip()  >> to nie bedzie wykonane
     
+    8. mock from unittest:
     
+    from unittest.mock import patch
     
+    # pocztkowo kozystamy z funkcji path ktora jest czescioa unittest.mock, natomiast może to być kłopotliwe
+    # poniewaz trzeba dodać pełna ścieżkę do metody i co ma zwrucic; dlatego druga wersja kozysta z patch.object
+    with patch('twitter.Twitter.get_user_avatar', return_value='test'):
+    # druga wersja kożysta z obiektu, przyjmuje obiekt, metode i co ma zwucic:
+    with patch.object(Twitter, 'get_user_avatar', return_value='test'):
+
+    # jezeli ni echcemy kozystac z blocku with mozna przekazac moka dekoratoerm @path.object
+    @patch.object(Twitter, 'get_user_avatar', return_value='test')
+def test_tweet_single_message(avatar_mock, twitter):  # avatar_mock - pod tą zmienną bedzie przekazany wynik dekoratora
+    # i musi być wrzucony w tym miejscu poniewaz inaczej nie bedzie do niegfo dostepu
+    twitter.tweet('Test message')
+    assert twitter.tweet_messages == ['Test message']
+
+    mock daje nam dostep do paru metod m.in
     
+    avatar_mock.assert_called()  >> sprawdzamy czy zostala wywowalna nasza metoda >> get_user_avatar
     
+mozemy rowniez zamokowac biblioteke request:
+@patch.object(requests, 'get', return_value=ResponseGetMock())  >> mokujemy biblioteke requests o metodzie get i dostajemy return ResponseGetMock() 
+def test_tweet_single_message(avatar_mock, twitter): 
+....
+
+class ResponseGetMock(object):
+    def json(self):
+        return {'avatar_url': 'test'}
+        
+9. obiekt Mock()
+
+@patch.object(requests, 'get', return_value=ResponseGetMock())
+def test_tweet_with_hashtag_mock(avatar_mock, twitter):
+    twitter.find_hashtags = Mock()  # to jest obiekt Mock z unittest
+    twitter.find_hashtags.return_value = ['first']  # przekazujemy wartosc "first" - napisujemy to co będzie w hashtagu 
+    twitter.tweet('Test #second')
+    assert twitter.tweets[0]['hashtags'] == ['first']  >> sprawdzamy czy pierszy elemnt listy to "first"
+    twitter.find_hashtags.assert_called_with('Test #second')  >> sprawdzamy czy to zostalo wywolane z parametrem "Test #second"
+    
+ żeby nadpisa metody dunder np __eq__ trzeba uzyc mocka >> MagicMock()
+    
+def test_twitter_version(twitter):
+    twitter.version = MagicMock()
+    # uwaga MOck nie wspiera używania metod __naza__ dunder dlatego trzeba użyć MacicMock
+    twitter.version.__eq__.return_value = '2.0'
+    assert twitter.version == '2.0'
     
     
 ```
