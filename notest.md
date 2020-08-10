@@ -219,9 +219,13 @@ wpisujac requests.get tez mamy wszelkie informacje. mozemy przesc do np resp  w 
 
 wszytskie slowa kluczowe w wdb zaczynamy od kropiki .c >> przejdzeimy do kolejnego wywoalanie wdb
  
- 
+ 13. uruchamianie konkretnych testow
     
-    
-    
+    np pytest nazwa_pliku.py
+   
+   pytest nazwa_pliku.py::nazwa_naszego_testu  >> odpalimy konkretny test
+   
+   pytest -k nazwa_szukana_w_testach   >> wyszuka po tej nazwie uruchomi
+   
     
 ```
