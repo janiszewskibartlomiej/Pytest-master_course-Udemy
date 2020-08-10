@@ -191,7 +191,17 @@ Globalny plik konfiguracyjny, w ktorym zemy miec np hookie np
  trzymamy tam np funkcje ktore bedziemy uzwywac wielu miejscach
     
     
-    
+ 11. coverage >> pip install pytest-cov
+ 
+ uruchomienie pytest --cov twitter  >> nazwa modułu do testów czyli pliku
+ 
+ mozemy wygenerowac raport z pokrycia cov poprzez >>  pytest --cov twitter --cov-report annotate  wygeneruje plik twitter.py,cover
+ znak ">" to == ze jest pokrycie testami
+ a tam gdzie jest znak "!" to nie przetestowae linijki kodu
+ 
+ 
+ 
+ 
     
     
     
