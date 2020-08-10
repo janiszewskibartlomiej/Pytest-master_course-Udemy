@@ -108,4 +108,36 @@ def backend(tmpdir):  # tmpdir to funkcja ktora zapisuje do tymczasowego pliku g
     temp_file = tmpdir.join('test.txt')
     temp_file.write('')
     return temp_file  # to zostaje wydzielone do conftest ponieważ nie jest uzywany tyko do testow twitter
+    
+      
+7. monkeypatch:
+
+@pytest.fixture(autouse=True)
+def no_requests(monkeypatch):  # monkeypatch to wbudowana funkcja w pytest  >> mozemy argument napisywa, wyłącznia danycch funkcjonalności
+    monkeypatch.delattr('requests.sessions.Session.request')  # tu wskazujey atrybut ktory chcemy wylaczyc z dzialania
+    
+  @pytest.fixture(params=['list', 'backend'], name='twitter')
+def fixture_twitter(backend, username, request, monkeypatch):
+    if request.param == 'list':
+        twitter = Twitter(username=username)
+    elif request.param == 'backend':
+        twitter = Twitter(backend=backend, username=username)
+
+    def monkey_return(url):
+         return "test"
+     
+    monkeypatch.setattr(twitter, 'get_user_avatar', monkey_return) # setattr przyjmuje obiekt który chcemy paczowac, metode do paczowania oraz 
+    funkcje ktora zostanie wywowalana zamiast naszej metody get_ueser_avatar
+    # funkcja monkey_return zostanie wywolana zamiast metody get_user... w obiekcie twitter
+
+    return twitter  
+    
+    pytest.skip()  >> to nie bedzie wykonane
+    
+    
+    
+    
+    
+    
+    
 ```
