@@ -227,5 +227,21 @@ wszytskie slowa kluczowe w wdb zaczynamy od kropiki .c >> przejdzeimy do kolejne
    
    pytest -k nazwa_szukana_w_testach   >> wyszuka po tej nazwie uruchomi
    
-    
+ 14. pytest.mark
+ 
+ @pytest.mark.skip   >> pomija testy z tym dekoratorem
+ @pytest.mark.skipif(warunek pominiecia np os.environ.get('NO_SUMMING') == '1', powód pominiecia reason= 'NO_SUMMING set to 1')
+ 
+ mozemy zadeklarowac zmienna dla jednego uruchomienia przed komenda pytest ...
+ 
+ np NO_SUMMING=1 pytest custom_test.py
+ 
+ ustawienie zmiennej srodowiskowej >> export NO_SUMMING=1   a sprawdzenie przez printenv NO_SUMMING
+ 
+ 
+ @pytest.mark.xfail   >> oznacza ze nasz test ma zakonczyc sie porazka
+ 
+ >>> kropka oznacze jeden test zdany, s jako skip, x jako xfail
+ 
+ 
 ```
