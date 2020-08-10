@@ -200,6 +200,24 @@ Globalny plik konfiguracyjny, w ktorym zemy miec np hookie np
  a tam gdzie jest znak "!" to nie przetestowae linijki kodu
  
  
+ 12. debugowanie
+ 
+ import pdb
+ pdb.set_trace() >>> jak umiescimy ten kod w danym miejscu to sie tu zatrzyma i bedziemy mieli dostep do zmiennych zadeklarowanych w tym miejscu.
+ odpali sie konsola i bedzimey mogli wpisac np url i dostaneimy info jaka jest wartosc url. Możemy zobaczyc np czym jest requests.get  >> ze to jest MagicMock
+ mozemy rozniez >> requests.get(url); mozna rowniez przypisac do zmiennych np ur = "test"
+aby kontynuowac wystarczy wisac "c" i enter
+pdb nie jest zbyt czytelne
+
+lepiej pip install wdb  + pip install wdb.server
+
+w kodzie trzeba umiescic wdb.set_trace() i musimy odpalic server  wdb.server.py
+
+jak uruchomimy nasz kod to w przegladarce zstanie uruchomiona interaktywana sesja debugera webowego
+wpisujac np self mam info na temat obiektu + wszytskie informacje jakie metody, wersja itd
+wpisujac requests.get tez mamy wszelkie informacje. mozemy przesc do np resp  w naszej mtodzie >> __call__  >> self i co zwruci __return__
+
+wszytskie slowa kluczowe w wdb zaczynamy od kropiki .c >> przejdzeimy do kolejnego wywoalanie wdb
  
  
     
