@@ -182,5 +182,18 @@ def test_twitter_version(twitter):
     twitter.version.__eq__.return_value = '2.0'
     assert twitter.version == '2.0'
     
+10. conftest:
+
+Globalny plik konfiguracyjny, w ktorym zemy miec np hookie np 
+    def pytest_runtest_setup():
+    print("<-- strating test")
+    
+ trzymamy tam np funkcje ktore bedziemy uzwywac wielu miejscach
+    
+    
+    
+    
+    
+    
     
 ```
